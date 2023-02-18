@@ -1,0 +1,59 @@
+---
+- name: Create a text file on the nodes
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Create the file
+      file:
+        path: 
+          - /home/ubuntu/part2_task.txt
+          - /home/ubuntu/index.html
+        state: touch
+        mode: 
+          - 0644
+          - 0644
+
+    - name: Add content to the file
+      lineinfile:
+        path: /home/ubuntu/part2_task.txt
+        line: 'I am a text file. I exist on the nodes.'
+        
+    - name: Archive the file
+      archive:
+        path: /home/ubuntu/part2_task.txt
+        dest: /home/ubuntu/part2_task.tar.gz
+        format: gz
+
+    - name: Delete the original file
+      file:
+        path: /home/ubuntu/part2_task.txt
+        state: absent
+    
+    - name: Download public IP address
+      shell: "wget -q -O index.html http://icanhazip.com"
+      register: wget_result
+
+    - name: Save public IP address to file
+      copy:
+        content: "{{ wget_result.stdout }}"
+        dest: /home/ubuntu/index.html
+        
+
+    - name: Create directories
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /home/ubuntu/opsschool
+        - /home/ubuntu/opsschool/ansible
+        - /etc/opsschool
+      become: yes
+
+    - name: Create user
+      user:
+        name: opsschool
+        home: /opsschool
+        shell: /bin/bash
+        createhome: yes
+        state: present
