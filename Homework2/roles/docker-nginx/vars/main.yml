@@ -11,5 +11,7 @@ nginx_container_port: 80
 
 # Docker users
 docker_users:
-  - user1
-  - user2
+  ubuntu:
+    users: ["ubuntu"]
+  redhat:
+    users: ["ec2-user"]
