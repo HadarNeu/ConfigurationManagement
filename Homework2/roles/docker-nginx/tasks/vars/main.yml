@@ -1,0 +1,11 @@
+# roles/docker-nginx/tasks/vars/main.yml
+
+# Variables for Docker installation
+docker_package: docker-ce
+docker_package_state: present
+
+# Variables for Nginx container
+nginx_image_name: nginx
+nginx_container_name: nginx
+nginx_container_port: 80
+#

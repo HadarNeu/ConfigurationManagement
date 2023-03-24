@@ -1,0 +1,75 @@
+- name: Install Docker 
+  block:
+  - name: Install required system packages on Ubuntu
+    apt:
+      pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - python3-pip
+        - virtualenv
+        - python3-setuptools
+      state: latest
+      update_cache: true
+    when: ansible_os_family == "Debian"
+    
+  - name: Install required system packages on RedHat
+    yum:
+      pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - python3-pip
+        - virtualenv
+        - python3-setuptools
+      state: latest
+      update_cache: true
+    when: ansible_os_family == "RedHat"
+    
+  - name: Add Docker GPG apt Key on Ubuntu
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+    when: ansible_os_family == "Debian"
+    
+  - name: Add Docker GPG apt Key on RedHat/Centos
+    rpm_key:
+      key: https://download.docker.com/linux/centos/gpg
+      state: present
+    when: ansible_os_family == "RedHat"
+  
+  - name: Add Docker Repository and install docker-ce
+    when: ansible_os_family == "Debian"
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu focal stable
+      state: present
+    apt:
+      name: docker-ce
+      state: latest
+      update_cache: true
+  
+  - name: Add Docker Repository and install docker-ce
+    when: ansible_os_family == "RedHat"
+    yum_repository:
+      baseurl: https://download.docker.com/linux/centos/7/x86_64/stable
+      name: Docker CE Stable - $basearch
+      gpgcheck: true
+      gpgkey: https://download.docker.com/linux/centos/gpg
+    yum:
+      name: docker-ce
+      state: latest
+      update_cache: true
+  
+- name: Install Docker Module for Python
+pip:
+  name: docker
+  
+- name: Run Nginx container
+docker_container:
+  name: "{{ nginx_container_name }}"
+  image: "{{ nginx_image_name }}"
+  ports:
+    - "{{ nginx_container_port }}:80"
+become: true
