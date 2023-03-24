@@ -9,5 +9,6 @@ filters:
     # - Node1
     # - Node0
     - Node2
+    #- Node3
 
 hostnames: network-interface.addresses.private-ip-address
