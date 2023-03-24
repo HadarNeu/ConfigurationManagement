@@ -6,7 +6,8 @@ regions:
 filters:
   instance-state-name : running
   tag:Name:
-    - Node1
-    - Node0
+    # - Node1
+    # - Node0
+    - Node2
 
 hostnames: network-interface.addresses.private-ip-address

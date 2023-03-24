@@ -2,5 +2,6 @@
 - name: Play for create docker and run nginx
   hosts: all
   become: yes
+  remote_user:  "{{ 'ubuntu' if platform_details == 'Linux/UNIX' else 'ec2-user' }}"
   roles:
     - docker-nginx
