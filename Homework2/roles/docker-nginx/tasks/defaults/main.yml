@@ -8,4 +8,8 @@ docker_package_state: present
 nginx_image_name: nginx
 nginx_container_name: nginx
 nginx_container_port: 80
-#
+
+# Docker users
+docker_users:
+  - user1
+  - user2
