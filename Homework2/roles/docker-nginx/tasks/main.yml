@@ -1,3 +1,4 @@
+#UBUNTU
 - name: Install required system packages on Ubuntu
   apt:
     pkg:
@@ -12,31 +13,12 @@
     update_cache: true
   when: ansible_os_family == "Debian"
   
-# - name: Install required system packages on RedHat
-#   yum:
-#     name:
-#       - apt-transport-https
-#       - ca-certificates
-#       - curl
-#       - software-properties-common
-#       - python3-pip
-#       - virtualenv
-#       - python3-setuptools
-#     state: latest
-#     update_cache: true
-#   when: ansible_os_family == "RedHat"
-  
 - name: Add Docker GPG apt Key on Ubuntu
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
   when: ansible_os_family == "Debian"
 
-- name: Add Docker GPG apt Key on RedHat/Centos
-  rpm_key:
-    key: https://download.docker.com/linux/centos/gpg
-    state: present
-  when: ansible_os_family == "RedHat"
 
 - name: Add Docker Repository on Ubuntu 
   when: ansible_os_family == "Debian"
@@ -50,22 +32,88 @@
     name: docker-ce
     state: latest
     update_cache: true
-  
 
-- name: Add Docker Repository on RedHat
-  yum_repository:
-    baseurl: https://download.docker.com/linux/centos/7/x86_64/stable
-    name: Docker CE Stable - $basearch
-    # gpgcheck: true
-    gpgkey: https://download.docker.com/linux/centos/gpg
+- name: Add user to docker group when Ubuntu
+  user:
+    name: "{{ item }}"
+    append: yes
+    groups: docker
+  become: true
+  with_items: "{{ docker_users['ubuntu']['users'] }}"
+  when: ansible_os_family == "Debian"
+
+#REDHAT
+
+- name: Install pip
+  yum:
+    name: python3-pip
+    state: latest
+  when: ansible_os_family == "RedHat" 
+  
+- name: Add Docker YUM repository
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
   when: ansible_os_family == "RedHat"
 
-- name: Add install docker-ce on RedHat
-  yum:
+- name: Install Docker
+  package:
     name: docker-ce
     state: latest
-    update_cache: true
   when: ansible_os_family == "RedHat"
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+  when: ansible_os_family == "RedHat"
+
+
+
+# - name: Add signing key
+#   ansible.builtin.rpm_key:
+#     key: "https://download.docker.com/linux/rhel/gpg"
+#     state: present
+#   when: ansible_os_family == "RedHat"
+
+# - name: Add repository into repo.d list
+#   ansible.builtin.yum_repository:
+#     name: docker
+#     description: docker repository
+#     baseurl: "https://download.docker.com/linux/rhel/$releasever/$basearch/stable"
+#     enabled: true
+#     gpgcheck: true
+#     gpgkey: "https://download.docker.com/linux/rhel/gpg"
+#   when: ansible_os_family == "RedHat"
+
+# # - name: Install docker on Red Hat
+# #   yum:
+# #     name: 
+# #       - yum-utils
+
+# #     state: present
+# #   when: ansible_os_family == "RedHat"
+
+# - name: Install Docker
+#   ansible.builtin.yum:
+#     name:
+#       - docker-ce
+#       - docker-ce-cli
+#       - containerd.io
+#     state: latest
+#     update_cache: true
+#   when: ansible_os_family == "RedHat"
+
+# - name: Add user to docker group when RedHat
+#   user:
+#     name: "{{ item }}"
+#     append: yes
+#     groups: docker
+#   become: true
+#   with_items: "{{ docker_users['redhat']['users'] }}"
+#   when: ansible_os_family == "RedHat"
+
+#GENERAL
   
 - name: Install Docker Module for Python
   pip:
@@ -79,20 +127,5 @@
       - 80:80
   become: true
 
-- name: Add user to docker group when Ubuntu
-  user:
-    name: "{{ item }}"
-    append: yes
-    groups: docker
-  become: true
-  with_items: "{{ docker_users['ubuntu']['users'] }}"
-  when: ansible_os_family == "Debian"
 
-- name: Add user to docker group when RedHat
-  user:
-    name: "{{ item }}"
-    append: yes
-    groups: docker
-  become: true
-  with_items: "{{ docker_users['redhat']['users'] }}"
-  when: ansible_os_family == "RedHat"
+
