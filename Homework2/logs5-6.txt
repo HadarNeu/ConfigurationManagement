@@ -1,0 +1,46 @@
+ubuntu@ip-10-0-1-9:~/ConfigurationManagement/Homework2$ ansible-playbook playbook_role.yml -i dynamic_inventory.aws_ec2.yaml 
+
+PLAY [Play for create docker and run nginx] *****************************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************************************
+[DEPRECATION WARNING]: Distribution rhel 9.0 on host 10.0.1.66 should use /usr/libexec/platform-python, but is using /usr/bin/python for backward 
+compatibility with prior Ansible releases. A future Ansible release will default to using the discovered platform python for this host. See 
+https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information. This feature will be removed in version 2.12. 
+Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+ok: [10.0.1.66]
+
+TASK [docker-nginx : Install required system packages on Ubuntu] ********************************************************************************************
+skipping: [10.0.1.66]
+
+TASK [docker-nginx : Add Docker GPG apt Key on Ubuntu] ******************************************************************************************************
+skipping: [10.0.1.66]
+
+TASK [docker-nginx : Add Docker Repository on Ubuntu] *******************************************************************************************************
+skipping: [10.0.1.66]
+
+TASK [docker-nginx : Install docker-ce on Ubuntu] ***********************************************************************************************************
+skipping: [10.0.1.66]
+
+TASK [docker-nginx : Add user to docker group when Ubuntu] **************************************************************************************************
+skipping: [10.0.1.66] => (item=ubuntu) 
+
+TASK [docker-nginx : Adding Docker GPG rpm Key] *************************************************************************************************************
+ok: [10.0.1.66]
+
+TASK [docker-nginx : Adding Docker Repository] **************************************************************************************************************
+ok: [10.0.1.66]
+
+TASK [docker-nginx : Installing docker yum] *****************************************************************************************************************
+ok: [10.0.1.66]
+
+TASK [docker-nginx : Install Docker Module for Python] ******************************************************************************************************
+ok: [10.0.1.66]
+
+TASK [docker-nginx : Start docker] **************************************************************************************************************************
+changed: [10.0.1.66]
+
+TASK [docker-nginx : Run Nginx container] *******************************************************************************************************************
+changed: [10.0.1.66]
+
+PLAY RECAP **************************************************************************************************************************************************
+10.0.1.66                  : ok=7    changed=2    unreachable=0    failed=0    skipped=5    rescued=0    ignored=0   
