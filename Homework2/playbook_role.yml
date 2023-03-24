@@ -1,0 +1,6 @@
+---
+- name: Play for create docker and run nginx
+  hosts: all
+  become: yes
+  roles:
+    - docker-nginx
